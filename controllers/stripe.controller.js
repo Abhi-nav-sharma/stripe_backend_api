@@ -49,6 +49,21 @@ const captureAnIntent = async (req, res) => {
     }
 }
 
+const refundAnIntent = async (req, res) => {
+    try {
+        const refund = await stripe.refunds.create({
+            payment_intent: req.params.id
+        });
+        if(!refund){
+            return res.status(402).json({ status: 'failure', error: err.toString() })
+        }
+        return res.status(200).json({ status: 'success', data: refund })
+    }
+    catch (err) {
+        return res.status(500).json({ status: 'failure', error: err.toString() })
+    }
+}
+
 const getAllIntents = async (req, res) => {
 // Get the list of 5 last created payment intents
     try {
@@ -70,4 +85,4 @@ const getAllIntents = async (req, res) => {
 }
 
 
-module.exports = { createAnIntent, captureAnIntent, getAllIntents}
+module.exports = { createAnIntent, captureAnIntent, refundAnIntent, getAllIntents}
