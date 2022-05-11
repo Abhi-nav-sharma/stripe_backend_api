@@ -1,9 +1,12 @@
 const express= require('express')
-const { createAnIntent, getAllIntents } = require('../controllers/stripe.controller') //import methods from stripe.controller.js
+const { createAnIntent, getAllIntents, captureAnIntent } = require('../controllers/stripe.controller') //import methods from stripe.controller.js
 const router= express.Router() //create an express router
 
 // post method on route /api/v1/create_intent to create an intent
 router.post('/v1/create_intent',createAnIntent)
+
+// post method to capture an intent
+router.post('/v1/capture_intent/:id',captureAnIntent)
 
 //get method to get all intents
 router.get('/v1/get_intents',getAllIntents)
