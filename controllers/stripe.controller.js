@@ -20,7 +20,7 @@ const createAnIntent = async (req, res) => {
             return res.status(402).json({ status: 'failure', error: err.toString() })
         }
         //return payment intent payment page
-        return res.redirect(`https://stripe-payment-page.netlify.app?client_secret=${paymentIntent.client_secret}`)
+        return res.redirect(`https://stripe-payment-page.netlify.app?id=${paymentIntent.id}&client_secret=${paymentIntent.client_secret}`)
     }
     catch (err) {
         //return the error as response
