@@ -6,24 +6,32 @@ const createAnIntent = async (req, res) => {
 //creates an intent and redirect to payment page with client_secret
 //once payment completes status of payment intent changes to requires_capture
     try {
-        //create payment intent
         const paymentIntent = await stripe.paymentIntents.create({
             amount: req.body.amount,
             currency: req.body.currency,
-            payment_method_types: req.body.payment_method_types,
-            capture_method: req.body.capture_method,
-            automatic_payment_methods:req.body.automatic_payment_methods,
-            payment_method_types: req.body.payment_method_types
+            capture_method:req.body.capture_method
         });
         if (!paymentIntent) {
-            //if no intent created return error as response
             return res.status(402).json({ status: 'failure', error: err.toString() })
         }
-        //return payment intent payment page
-        return res.redirect(`https://stripe-payment-page.netlify.app?id=${paymentIntent.id}&client_secret=${paymentIntent.client_secret}`)
+        else{
+            try{
+                const confirmIntent = await stripe.paymentIntents.confirm(
+                    paymentIntent.id,{
+                        payment_method:req.body.payment_method
+                    }
+                );
+                if (!confirmIntent) {
+                    return res.status(402).json({ status: 'failure', error: err.toString() })
+                }
+                return res.status(200).json({ data: confirmIntent })
+            }
+            catch(err){
+                return res.status(500).json({ status: 'failure', error: err.toString() })
+            }
+        }
     }
     catch (err) {
-        //return the error as response
         return res.status(500).json({ status: 'failure', error: err.toString() })
     }
 }
@@ -41,7 +49,7 @@ const captureAnIntent = async (req, res) => {
             return res.status(402).json({ status: 'failure', error: err.toString() })
         }
         //return payment intent object
-        return res.status(200).json({ status: 'success', data: paymentIntent })
+        return res.status(200).json({ data: paymentIntent })
     }
     catch (err) {
         //return the error as response
@@ -57,7 +65,7 @@ const refundAnIntent = async (req, res) => {
         if(!refund){
             return res.status(402).json({ status: 'failure', error: err.toString() })
         }
-        return res.status(200).json({ status: 'success', data: refund })
+        return res.status(200).json({ data: refund })
     }
     catch (err) {
         return res.status(500).json({ status: 'failure', error: err.toString() })
