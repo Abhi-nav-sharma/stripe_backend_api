@@ -10,6 +10,9 @@ const createAnIntent = async (req, res) => {
             amount: req.body.amount,
             currency: req.body.currency,
             payment_method_types: req.body.payment_method_types,
+            capture_method: req.body.capture_method,
+            automatic_payment_methods:req.body.automatic_payment_methods,
+            payment_method_types: req.body.payment_method_types
         });
         if (!paymentIntent) {
             //if no intent created return error as response
@@ -24,5 +27,24 @@ const createAnIntent = async (req, res) => {
     }
 }
 
+const getAllIntents = async (req, res) => {
+    try {
+        //get last 5 payment intents
+        const paymentIntents = await stripe.paymentIntents.list({
+            limit: 5,
+        });
+        if (!paymentIntents) {
+            //if no payment intent return error as response
+            return res.status(402).json({ status: 'failure', error: err.toString() })
+        }
+        //return payment intens
+        return res.status(200).json({ status: 'success', data: paymentIntents })
+    }
+    catch (err) {
+        //return the error as response
+        return res.status(500).json({ status: 'failure', error: err.toString() })
+    }
+}
 
-module.exports = { createAnIntent }
+
+module.exports = { createAnIntent, getAllIntents}
