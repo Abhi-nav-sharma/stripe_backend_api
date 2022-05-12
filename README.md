@@ -35,7 +35,7 @@ You can use deployed url to run the available backend operations or can run the 
 ```
   npm start
 ```
-5. To create an intent
+### To create an intent
 ```js
   • method : POST 
   • url: http://localhost:5000/v1/create_intent
@@ -203,7 +203,7 @@ You can use deployed url to run the available backend operations or can run the 
     }
 }
 ```
-6. To capture an intent
+### To capture an intent
 ```js
   • method : POST 
   • url: http://localhost:5000/v1/capture_intent/PaymentIntentID
@@ -365,7 +365,7 @@ You can use deployed url to run the available backend operations or can run the 
     }
 }
 ```
-7. To create a refund for the created intent
+### To create a refund for the created intent
 ```js
   • method : POST 
   • url: http://localhost:5000/v1/create_refund/PaymentIntentID
@@ -389,7 +389,7 @@ You can use deployed url to run the available backend operations or can run the 
     }
 }
 ```
-8. To get a list of all intents
+### To get a list of all intents
 ```js
    • method : GET 
    • url : http://localhost:5000/v1/get_intents
