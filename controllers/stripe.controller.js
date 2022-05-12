@@ -3,8 +3,7 @@ require('dotenv').config()
 const stripe = require('stripe')(process.env.SECRET_KEY)
 
 const createAnIntent = async (req, res) => {
-//creates an intent with status requires_action and status changes to requires_capture after completing next_action using stripe_sdk
-//have to authenticate using link in next_action.use_stripe_sdk.stripe_js
+//creates a payment intent and confirm the payment intnent with payment_method passed in body and sets the status to requires_capture if capture_method is manual
     try {
         //create a payment_intent
         const paymentIntent = await stripe.paymentIntents.create({
@@ -18,7 +17,7 @@ const createAnIntent = async (req, res) => {
         }
         else{
             try{
-                //confirm the paymentintent using pm_card_visa payment_method
+                //confirm the paymentintent using test payment_method
                 const confirmIntent = await stripe.paymentIntents.confirm(
                     paymentIntent.id,{
                         payment_method:req.body.payment_method
@@ -28,9 +27,7 @@ const createAnIntent = async (req, res) => {
                     //if no intent confirmed return error as response
                     return res.status(402).json({ status: 'failure', error: err.toString() })
                 }
-                //return the intent with requires_action status
-                //authenticate using link in next_action.use_stripe_sdk.stripe_js
-                //intent will move to rquires_capture status
+                //return the intent with rquires_capture status if capture_method is manual otherwise succeeded
                 return res.status(200).json({ data: confirmIntent })
             }
             catch(err){
