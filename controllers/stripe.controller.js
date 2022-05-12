@@ -3,35 +3,44 @@ require('dotenv').config()
 const stripe = require('stripe')(process.env.SECRET_KEY)
 
 const createAnIntent = async (req, res) => {
-//creates an intent and redirect to payment page with client_secret
-//once payment completes status of payment intent changes to requires_capture
+//creates an intent with status requires_action and status changes to requires_capture after completing next_action using stripe_sdk
+//have to authenticate using link in next_action.use_stripe_sdk.stripe_js
     try {
+        //create a payment_intent
         const paymentIntent = await stripe.paymentIntents.create({
             amount: req.body.amount,
             currency: req.body.currency,
             capture_method:req.body.capture_method
         });
         if (!paymentIntent) {
+            //if no intent created return error as response
             return res.status(402).json({ status: 'failure', error: err.toString() })
         }
         else{
             try{
+                //confirm the paymentintent using pm_card_visa payment_method
                 const confirmIntent = await stripe.paymentIntents.confirm(
                     paymentIntent.id,{
                         payment_method:req.body.payment_method
                     }
                 );
                 if (!confirmIntent) {
+                    //if no intent confirmed return error as response
                     return res.status(402).json({ status: 'failure', error: err.toString() })
                 }
+                //return the intent with requires_action status
+                //authenticate using link in next_action.use_stripe_sdk.stripe_js
+                //intent will move to rquires_capture status
                 return res.status(200).json({ data: confirmIntent })
             }
             catch(err){
+                //return the error as response
                 return res.status(500).json({ status: 'failure', error: err.toString() })
             }
         }
     }
     catch (err) {
+        //return the error as response
         return res.status(500).json({ status: 'failure', error: err.toString() })
     }
 }
