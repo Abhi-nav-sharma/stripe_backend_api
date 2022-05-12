@@ -37,7 +37,7 @@ const createAnIntent = async (req, res) => {
 }
 
 const captureAnIntent = async (req, res) => {
-// capture an intent with status requires_capture
+// capture an intent having status requires_capture
 // after capture status changes to succeeded
     try {
         //capture payment intent with id in req.params.id
@@ -58,16 +58,21 @@ const captureAnIntent = async (req, res) => {
 }
 
 const refundAnIntent = async (req, res) => {
+    //refund an intent having status succeeded
     try {
+        //create refund on payment intent
         const refund = await stripe.refunds.create({
             payment_intent: req.params.id
         });
         if(!refund){
+            //if no intent found return error as response
             return res.status(402).json({ status: 'failure', error: err.toString() })
         }
+        //return refund object
         return res.status(200).json({ data: refund })
     }
     catch (err) {
+        //return the error as response
         return res.status(500).json({ status: 'failure', error: err.toString() })
     }
 }

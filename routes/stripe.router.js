@@ -8,6 +8,7 @@ router.post('/v1/create_intent',createAnIntent)
 // post method to capture an intent
 router.post('/v1/capture_intent/:id',captureAnIntent)
 
+//post method to refund an intent
 router.post('/v1/create_refund/:id',refundAnIntent)
 
 //get method to get all intents
